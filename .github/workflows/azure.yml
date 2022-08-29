@@ -1,5 +1,15 @@
 name: Azure-docker-build-Workflow
 on:
+  workflow_call:
+    secrets:
+      ORG_AZURE_CREDENTIALS:
+        required: true
+      ORG_REGISTRY_USERNAME:
+        required: true
+      ORG_REGISTRY_LOGIN_SERVER:
+         required: true
+      ORG_REGISTRY_PASSWORD:
+         required: true
 
   workflow_dispatch:
     inputs:
