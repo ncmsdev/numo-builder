@@ -10,15 +10,6 @@ on:
          required: true
       ORG_REGISTRY_PASSWORD:
          required: true
-
-  workflow_dispatch:
-    inputs:
-      1name:
-        description: "Repository Name"
-        required: true
-      2name: 
-        description: "Tag Name"
-        required: true
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
@@ -29,7 +20,15 @@ jobs:
         # checkout the repo
         - name: 'Checkout GitHub repo'
           uses: actions/checkout@v3 
-          
+        - name: Install Azure cli
+            run:|
+                sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
+                curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+                AZ_REPO=$(lsb_release -cs)
+                echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+                sudo apt-get update
+                sudo apt-get install azure-cli 
+                
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
           with:
