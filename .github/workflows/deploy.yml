@@ -10,6 +10,8 @@ on:
          required: true
       ORG_REGISTRY_PASSWORD:
          required: true
+      ORG_RESOURCE_GROUP:
+         required: true
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
