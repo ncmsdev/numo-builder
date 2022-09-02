@@ -33,6 +33,6 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
         - run: |
-            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
-            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
+            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
       
