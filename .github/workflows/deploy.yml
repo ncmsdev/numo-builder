@@ -1,0 +1,36 @@
+name: Azure-docker-deploy-Workflow
+on:
+  workflow_call:
+    secrets:
+      ORG_AZURE_CREDENTIALS:
+        required: true
+      ORG_REGISTRY_USERNAME:
+        required: true
+      ORG_REGISTRY_LOGIN_SERVER:
+         required: true
+      ORG_REGISTRY_PASSWORD:
+         required: true
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+        - uses: elstudio/action-install-azure-cli@v1
+                
+        - name: 'Login via Azure CLI'
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
+        
+        - name: 'Deploy to Azure Container Instances'
+          uses: 'azure/aci-deploy@v1'
+          with:
+            resource-group: ${{ secrets.ORG_RESOURCE_GROUP }}
+            dns-name-label: ${{ secrets.ORG_RESOURCE_GROUP }}${{ github.run_number }}
+            image: ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
+            registry-login-server: ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}
+            registry-username: ${{ secrets.ORG_REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+            name: 'numotrials'
+            location: 'Central US' 
