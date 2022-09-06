@@ -1,0 +1,22 @@
+name: Deploy-image-on-devfusion
+on:
+  workflow-dispatch:
+    inputs:
+      1name:
+        description: ""
+        required: false
+      2name: 
+        description: ""
+        required: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: 'Login via Azure CLI'
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+            
+        - name: 'docker pull'
+          run: docker pull numotrials.azurecr.io/ocppserver:v1.0.0
