@@ -24,15 +24,6 @@ jobs:
           uses: azure/login@v1
           with:
             creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
-        
-        - name: 'Deploy to Azure Container Instances'
-          uses: 'azure/aci-deploy@v1'
-          with:
-            resource-group: ${{ secrets.ORG_RESOURCE_GROUP }}
-            dns-name-label: ${{ secrets.ORG_RESOURCE_GROUP }}${{ github.run_number }}
-            image: ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
-            registry-login-server: ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}
-            registry-username: ${{ secrets.ORG_REGISTRY_USERNAME }}
-            registry-password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
-            name: 'numotrials'
-            location: 'Central US' 
+            
+        - name: to pull docker image
+          run: docker pull numotrials.azurecr.io/ocppserver:v1.0.0
