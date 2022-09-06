@@ -1,13 +1,5 @@
 name: Deploy-image-on-devfusion
-on:
-  workflow-dispatch:
-    inputs:
-      1name:
-        description: ""
-        required: false
-      2name: 
-        description: ""
-        required: false
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
