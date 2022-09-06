@@ -1,7 +1,5 @@
 name: deploy_Workflow
 on: [push]
-
-
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
@@ -21,6 +19,6 @@ jobs:
             login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
-        - run: docker pull ${{ secrets.REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
+            run: docker pull ${{ secrets.REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
 
         
