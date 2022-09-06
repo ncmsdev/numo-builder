@@ -1,18 +1,26 @@
-name: Deploy-image-on-devfusion
-on: 
-  workflow_call:
-    secrets:
-      ORG_AZURE_CREDENTIALS:
-        required: true
-jobs:
-  build:
-    runs-on: ubuntu-latest
+name: deploy_Workflow
+on: [push]
 
-    steps:
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+          
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
           with:
-            creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
-            
-        - name: 'docker pull'
-          run: docker pull numotrials.azurecr.io/ocppserver:v1.0.0
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+        - name: 'pull image'
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+        - run: docker pull ${{ secrets.REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
+
+        
