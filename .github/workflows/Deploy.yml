@@ -24,5 +24,5 @@ jobs:
             key: ${{ secrets.ORG_KEY }}
             port: ${{ secrets.ORG_PORT }}
             script: |
-                ls -al
+                docker pull numotrials.azurecr.io/ocppserver:v1.0.0
                 
