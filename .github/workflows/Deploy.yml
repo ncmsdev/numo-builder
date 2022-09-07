@@ -27,5 +27,5 @@ jobs:
             port: ${{ secrets.ORG_PORT }}
             script: |
                 docker pull numotrials.azurecr.io/ocppserver:v2.0.0
-                
+                docker run -d numotrials.azurecr.io/ocppserver:v2.0.0
                 
