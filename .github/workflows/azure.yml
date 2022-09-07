@@ -2,6 +2,8 @@ name: Azure-docker-build-Workflow
 on:
   workflow_call:
     secrets:
+      ORG_NPM_INSTALL:
+        required: true
       ORG_AZURE_CREDENTIALS:
         required: true
       ORG_REGISTRY_USERNAME:
@@ -13,12 +15,29 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
+   runs-on: ubuntu-latest
+   steps:
         # checkout the repo
-        - name: 'Checkout GitHub repo'
-          uses: actions/checkout@v3 
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+          with:
+            persist-credentials: false
+          
+        - name: Setup Node
+          uses: actions/setup-node@v3
+          with:
+            node-version: '14.x'
+          
+        - name: Setup latest NPM
+          run: npm install -g npm@latest
+        
+        - name: Set permissions
+          run: |
+            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+        
+        - name: Get dependencies
+          run: npm ci
+          
         - uses: elstudio/action-install-azure-cli@v1
                 
         - name: 'Login via Azure CLI'
@@ -33,6 +52,6 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
         - run: |
-            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
-            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v1.0.0
+            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v2.0.0
+            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v2.0.0
       
