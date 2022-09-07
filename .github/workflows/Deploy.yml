@@ -1,0 +1,28 @@
+name: deploy_Workflow
+on: 
+    workflow_call:
+        secrets:
+          ORG_USERNAME:
+             required: true
+          ORG_KEY:
+             required: true
+          ORG_PORT:
+             required: true
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+        
+        - name: executing remote ssh commands using ssh key
+          uses: appleboy/ssh-action@master
+          with:
+            host: devfusion.numocity.in
+            username: ${{ secrets.ORG_USERNAME }}
+            key: ${{ secrets.ORG_KEY }}
+            port: ${{ secrets.ORG_PORT }}
+            script: |
+                ls -al
+                
