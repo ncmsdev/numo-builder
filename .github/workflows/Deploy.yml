@@ -2,8 +2,6 @@ name: deploy_Workflow
 on: 
     workflow_call:
         secrets:
-          ORG_NPM_INSTALL:
-             required: true
           ORG_USERNAME:
              required: true
           ORG_KEY:
@@ -19,21 +17,6 @@ jobs:
           uses: actions/checkout@main
           with:
             persist-credentials: false
-          
-        - name: Setup Node
-          uses: actions/setup-node@v3
-          with:
-            node-version: '14.x'
-          
-        - name: Setup latest NPM
-          run: npm install -g npm@latest
-        
-        - name: Set permissions
-          run: |
-            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
-        
-        - name: Get dependencies
-          run: npm ci
         
         - name: executing remote ssh commands using ssh key
           uses: appleboy/ssh-action@master
@@ -43,5 +26,6 @@ jobs:
             key: ${{ secrets.ORG_KEY }}
             port: ${{ secrets.ORG_PORT }}
             script: |
-                docker pull numotrials.azurecr.io/ocppserver:v1.0.0
+                docker pull numotrials.azurecr.io/ocppserver:v2.0.0
+                
                 
