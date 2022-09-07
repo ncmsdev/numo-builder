@@ -2,6 +2,8 @@ name: deploy_Workflow
 on: 
     workflow_call:
         secrets:
+          ORG_NPM_INSTALL:
+             required: true
           ORG_USERNAME:
              required: true
           ORG_KEY:
