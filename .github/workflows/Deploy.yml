@@ -15,6 +15,21 @@ jobs:
         # checkout the repo
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
+          
+        - name: Setup Node
+          uses: actions/setup-node@v3
+          with:
+            node-version: '14.x'
+          
+        - name: Setup latest NPM
+          run: npm install -g npm@latest
+        
+        - name: Set permissions
+          run: |
+            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+        
+        - name: Get dependencies
+          run: npm ci
         
         - name: executing remote ssh commands using ssh key
           uses: appleboy/ssh-action@master
