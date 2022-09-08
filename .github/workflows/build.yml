@@ -1,6 +1,10 @@
 name: Azure-docker-build-Workflow
 on:
   workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
     secrets:
       ORG_NPM_INSTALL:
         required: true
@@ -52,6 +56,6 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
         - run: |
-            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v2.0.0
-            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:v2.0.0
+            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:${{ inputs.tag }}
+            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:${{ inputs.tag }}
       
