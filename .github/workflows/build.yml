@@ -57,6 +57,6 @@ jobs:
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
         - run: |
             export DOCKER_TAG=$(basename ${{ inputs.tag }})
-            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocpp_server2:$DOCKER_TAG
-            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocpp_server2:$DOCKER_TAG
+            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:$DOCKER_TAG
+            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocppserver:$DOCKER_TAG
       
