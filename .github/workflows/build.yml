@@ -31,7 +31,7 @@ jobs:
           run: |
             sudo apt install pcregrep
           env:
-            container_name = $(cat docker-compose.yml | pcregrep -o1 'container_name: (.*)$')
+            container_name: $(cat docker-compose.yml | pcregrep -o1 'container_name:(.*)$')
             
           
         - name: Setup Node
