@@ -29,6 +29,7 @@ jobs:
             
         - name: extract the container name
           run: |
+            sudo apt install pcregrep
             container_name = $(cat docker-compose.yml | pcregrep -o1 'container_name: (.*)$')
             
           
