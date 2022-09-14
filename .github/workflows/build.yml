@@ -30,8 +30,7 @@ jobs:
         - name: extract the container name
           run: |
             sudo apt install pcregrep
-          env:
-            container_name: $(cat docker-compose.yml | pcregrep -o1 'container_name:(.*)$')
+          
             
           
         - name: Setup Node
@@ -62,7 +61,11 @@ jobs:
             login-server: ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
-        - run: |
+            
+        - name: allow to use env variable
+          env:
+            container_name: $(cat docker-compose.yml | pcregrep -o1 'container_name:(.*)$')
+          run: |
             export DOCKER_TAG=$(basename ${{ inputs.tag }})
             docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/$container_name:$DOCKER_TAG
             docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/$container_name:$DOCKER_TAG
