@@ -26,6 +26,11 @@ jobs:
           uses: actions/checkout@main
           with:
             persist-credentials: false
+            
+        - name: extract the container name
+          run: |
+            container_name = $(cat docker-compose.yml | pcregrep -o1 'container_name: (.*)$')
+            
           
         - name: Setup Node
           uses: actions/setup-node@v3
@@ -57,6 +62,6 @@ jobs:
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
         - run: |
             export DOCKER_TAG=$(basename ${{ inputs.tag }})
-            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocpp_server:$DOCKER_TAG
-            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/ocpp_server:$DOCKER_TAG
+            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/$container_name:$DOCKER_TAG
+            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/$container_name:$DOCKER_TAG
       
