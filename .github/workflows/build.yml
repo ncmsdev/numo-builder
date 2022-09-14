@@ -1,4 +1,4 @@
-name: Azure-docker-build-Workflow
+name: Azure-docker-build-push
 on:
   workflow_call:
     inputs:
@@ -48,19 +48,19 @@ jobs:
           
         - uses: elstudio/action-install-azure-cli@v1
                 
-        - name: 'Login via Azure CLI'
+        - name: Login via Azure CLI
           uses: azure/login@v1
           with:
             creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
         
-        - name: 'Build and push image'
+        - name: azure login
           uses: azure/docker-login@v1
           with:
             login-server: ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
-        - name: update tag and name
+        - name: update tag,name and build,push
           run: |
             export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
             export DOCKER_TAG=$(basename ${{ inputs.tag }})
