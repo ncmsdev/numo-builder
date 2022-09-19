@@ -64,6 +64,6 @@ jobs:
           run: |
             export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
             export DOCKER_TAG=$(basename ${{ inputs.tag }})
-            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/$CONTAINER_NAME:$DOCKER_TAG
-            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/$CONTAINER_NAME:$DOCKER_TAG
+            docker build . -t ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/${CONTAINER_NAME}:$DOCKER_TAG
+            docker push ${{ secrets.ORG_REGISTRY_LOGIN_SERVER }}/${CONTAINER_NAME}:$DOCKER_TAG
       
