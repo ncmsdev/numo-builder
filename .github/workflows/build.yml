@@ -14,11 +14,16 @@ on:
         required: true
       ORG_REGISTRY_PASSWORD:
          required: true
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  call-checkmycode:
+    uses: ncmsdev/numo-builder/.github/workflows/checkmycode.yml@main
+    secrets:
+      ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
+
   build:
-   runs-on: ubuntu-latest
-   steps:
+    needs: [call-checkmycode]
+    runs-on: ubuntu-latest
+    steps:
         # checkout the repo
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
