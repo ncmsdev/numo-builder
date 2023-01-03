@@ -47,6 +47,11 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
+        - name: install npm dependencies   
+          run: |
+            cd 01_SourceCode/app
+            npm install
+            
         - name: update tag,name and build,push
           run: |
             export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
