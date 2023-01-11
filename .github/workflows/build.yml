@@ -51,8 +51,10 @@ jobs:
           
         - uses: elstudio/action-install-azure-cli@v1
                 
-        - name: Login via Azure CLI
-          run: sudo az login --service-principal -u 350cb86d-5f21-4882-94be-2af475061e77 -p "${{ secrets.AZ_SERVICE_PASSWORD }}" --tenant ${{ secrets.AZ_TENANT }}
+        - name: Azure Login
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
         
         - name: azure login
           uses: azure/docker-login@v1
