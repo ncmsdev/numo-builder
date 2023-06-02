@@ -12,6 +12,9 @@ on:
         required: true
       ORG_REGISTRY_PASSWORD:
          required: true
+      ORG_NPM_INSTALL:
+         required: true
+         
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
@@ -29,10 +32,6 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: '14.x'
-            
-        - name: Set permissions
-          run: |
-            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
           
         - name: Setup latest NPM
           run: npm install -g npm@latest
@@ -50,6 +49,10 @@ jobs:
             login-server: numogateway.azurecr.io
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+            
+        - name: Set permissions
+          run: |
+            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
             
         - name: install npm dependencies   
           run: |
