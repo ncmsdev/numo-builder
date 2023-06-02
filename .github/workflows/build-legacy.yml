@@ -38,7 +38,9 @@ jobs:
             git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
         
         - name: Get dependencies
-          run: npm ci --production
+          run: |
+            cd /home/runner/work/ncms-user/ncms-user/01_SourceCode/app/
+            npm ci --production
         
         - uses: elstudio/action-install-azure-cli@v1
                 
