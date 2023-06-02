@@ -52,7 +52,7 @@ jobs:
             
         - name: Set permissions
           run: |
-            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf https://${{ secrets.ORG_NPM_INSTALL }}@github.com/
             
         - name: install npm dependencies   
           run: |
