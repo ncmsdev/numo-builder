@@ -23,6 +23,8 @@ jobs:
         # checkout the repo
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
+          with:
+            persist-credentials: false
             
         - name: install pcregrep 
           run: |
