@@ -57,18 +57,33 @@ jobs:
           with:
             creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
         
-        - name: azure login
-          uses: azure/docker-login@v1
-          with:
-            login-server: numogateway.azurecr.io
-            username: ${{ secrets.ORG_REGISTRY_USERNAME }}
-            password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+        #- name: azure login
+          #uses: azure/docker-login@v1
+          #with:
+            #login-server: numogateway.azurecr.io
+            #username: ${{ secrets.ORG_REGISTRY_USERNAME }}
+            #password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
-        - name: update tag,name and build,push
+        #- name: update tag,name and build,push
+          #run: |
+            #export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+            #export DOCKER_TAG=$(basename ${{ inputs.tag }})
+            #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
+            #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+            #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+
+        - name: Check tag format
+          id: check_tag
           run: |
-            export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-            export DOCKER_TAG=$(basename ${{ inputs.tag }})
-            find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
-            docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-            docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+            if [[ "${{ inputs.tag }}" =~ ^SP\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::set-output name=valid::true"
+            else
+              echo "::set-output name=valid::false"
+            fi
+
+        - name: Conditional step
+          run: echo "This step will only run for valid SP tags"
+          if: steps.check_tag.outputs.valid == 'true'
+            
+            
       
