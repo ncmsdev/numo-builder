@@ -25,57 +25,57 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         # checkout the repo
-        - name: 'Checkout GitHub Action'
-          uses: actions/checkout@main
-          with:
-            persist-credentials: false
+        # - name: 'Checkout GitHub Action'
+        #   uses: actions/checkout@main
+        #   with:
+        #     persist-credentials: false
             
-        - name: install pcregrep 
-          run: |
-            sudo apt-get update
-            sudo apt install pcregrep
+        # - name: install pcregrep 
+        #   run: |
+        #     sudo apt-get update
+        #     sudo apt install pcregrep
             
-        - name: Setup Node
-          uses: actions/setup-node@v3
-          with:
-            node-version: '14.x'
+        # - name: Setup Node
+        #   uses: actions/setup-node@v3
+        #   with:
+        #     node-version: '14.x'
           
-        - name: Setup latest NPM
-          run: npm install -g npm@latest
+        # - name: Setup latest NPM
+        #   run: npm install -g npm@latest
         
-        - name: Set permissions
-          run: |
-            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+        # - name: Set permissions
+        #   run: |
+        #     git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
         
-        - name: Get dependencies
-          run: npm ci --production
+        # - name: Get dependencies
+        #   run: npm ci --production
           
-        - uses: elstudio/action-install-azure-cli@v1
+        # - uses: elstudio/action-install-azure-cli@v1
                 
-        #- name: Azure Login
-          #uses: azure/login@v1
-          #with:
-            #creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
+        # #- name: Azure Login
+        #   #uses: azure/login@v1
+        #   #with:
+        #     #creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
         
-        #- name: azure login
-          #uses: azure/docker-login@v1
-          #with:
-            #login-server: numogateway.azurecr.io
-            #username: ${{ secrets.ORG_REGISTRY_USERNAME }}
-            #password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+        # #- name: azure login
+        #   #uses: azure/docker-login@v1
+        #   #with:
+        #     #login-server: numogateway.azurecr.io
+        #     #username: ${{ secrets.ORG_REGISTRY_USERNAME }}
+        #     #password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
-        #- name: update tag,name and build,push
-          #run: |
-            #export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-            #export DOCKER_TAG=$(basename ${{ inputs.tag }})
-            #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
-            #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-            #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+        # #- name: update tag,name and build,push
+        #   #run: |
+        #     #export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+        #     #export DOCKER_TAG=$(basename ${{ inputs.tag }})
+        #     #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
+        #     #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+        #     #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
 
         - name: Check tag format
           run: |
             node update_json.js
-          if: startsWith(inputs.tag,'SP.')
+          if: startsWith(inputs.tag,'SP.') == true
             
             
             
