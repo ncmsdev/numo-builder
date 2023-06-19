@@ -81,7 +81,9 @@ jobs:
             
         - name: run a javascript file
           run: |
-            node release_manifest/update_json.js --container ${CONTAINER_NAME} --tag ${{ inputs.tag }} 
+            pwd
+            ls
+            # node release_manifest/update_json.js --container ${CONTAINER_NAME} --tag ${{ inputs.tag }}  
             
             
             
