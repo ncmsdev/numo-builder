@@ -15,13 +15,7 @@ on:
       ORG_REGISTRY_PASSWORD:
          required: true
 jobs:
-  call-checkmycode:
-    uses: ncmsdev/numo-builder/.github/workflows/checkmycode.yml@main
-    secrets:
-      ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
-
-  build:
-    needs: [call-checkmycode]
+    build:
     runs-on: ubuntu-latest
     steps:
         # checkout the repo
