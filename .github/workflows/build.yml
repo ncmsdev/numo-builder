@@ -83,7 +83,7 @@ jobs:
           run: |
             pwd
             ls
-            # node release_manifest/update_json.js --container ${CONTAINER_NAME} --tag ${{ inputs.tag }}  
+            node release_manifest/update_tag.js --container ${CONTAINER_NAME} --tag ${{ inputs.tag }}  
             
             
             
