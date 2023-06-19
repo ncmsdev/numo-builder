@@ -72,10 +72,16 @@ jobs:
         #     #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
         #     #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
 
-        - name: Check tag format
+        - name: Checkout release_manifest repo
+          uses: actions/checkout@main
+          with:
+            repository: ncmsdev/release_manifest
+            token: ${{ secrets.ORG_NPM_INSTALL }}
+            path: release_manifest 
+            
+        - name: run a javascript file
           run: |
-            node update_json.js
-          if: startsWith(inputs.tag,'SP.') == true
+            node release_manifest/update_json.js --container ${CONTAINER_NAME} --tag ${{ inputs.tag }} 
             
             
             
