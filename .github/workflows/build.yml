@@ -25,15 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         # checkout the repo
-        # - name: 'Checkout GitHub Action'
-        #   uses: actions/checkout@main
-        #   with:
-        #     persist-credentials: false
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+          with:
+            persist-credentials: false
             
-        # - name: install pcregrep 
-        #   run: |
-        #     sudo apt-get update
-        #     sudo apt install pcregrep
+        - name: install pcregrep 
+          run: |
+            sudo apt-get update
+            sudo apt install pcregrep
             
         - name: Setup Node
           uses: actions/setup-node@v3
