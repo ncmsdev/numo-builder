@@ -15,13 +15,13 @@ on:
       ORG_REGISTRY_PASSWORD:
          required: true
 jobs:
-  # call-checkmycode:
-  #   uses: ncmsdev/numo-builder/.github/workflows/checkmycode.yml@main
-  #   secrets:
-  #     ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
+  call-checkmycode:
+    uses: ncmsdev/numo-builder/.github/workflows/checkmycode.yml@main
+    secrets:
+      ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
 
   build:
-    # needs: [call-checkmycode]
+    needs: [call-checkmycode]
     runs-on: ubuntu-latest
     steps:
         # checkout the repo
@@ -50,19 +50,19 @@ jobs:
         - name: Get dependencies
           run: npm ci --production
           
-#         - uses: elstudio/action-install-azure-cli@v1
+        - uses: elstudio/action-install-azure-cli@v1
                 
-#         - name: Azure Login
-#           uses: azure/login@v1
-#           with:
-#             creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
+        - name: Azure Login
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
         
-#         - name: azure login
-#           uses: azure/docker-login@v1
-#           with:
-#             login-server: numogateway.azurecr.io
-#             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
-#             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+        - name: azure login
+          uses: azure/docker-login@v1
+          with:
+            login-server: numogateway.azurecr.io
+            username: ${{ secrets.ORG_REGISTRY_USERNAME }}
+            password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
         - name: Checkout release_manifest repo
           uses: actions/checkout@main
@@ -74,21 +74,18 @@ jobs:
         - name: update tag,name and build,push
           run: |
               export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-              echo $CONTAINER_NAME
               export DOCKER_TAG=$(basename ${{ inputs.tag }})
-              echo $DOCKER_TAG
+              find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
+              docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               cd release_manifest
               node update_tag.js $CONTAINER_NAME $DOCKER_TAG
-              cat v3.26.00.json
               
         - name: git commit and push the version.json
           run : |
             cd release_manifest
-            pwd
             git config user.email "developer@numocity.com"
             git config user.name "Numo Dev"
             git add .
             git commit -m "Automated commit via GitHub Action"
             git push
-
-       
