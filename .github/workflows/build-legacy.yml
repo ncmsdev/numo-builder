@@ -75,7 +75,7 @@ jobs:
             cd 01_SourceCode
             docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
             docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-            cd release_manifest
+            cd ../release_manifest
             node update_tag.js $CONTAINER_NAME $DOCKER_TAG
 
         - name: git commit and push the version.json
