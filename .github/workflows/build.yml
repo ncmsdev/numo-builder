@@ -64,26 +64,32 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
-        - name: update tag,name and build,push
-          run: |
-              export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-              echo $CONTAINER_NAME
-              export DOCKER_TAG=$(basename ${{ inputs.tag }})
-        #     #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
-        #     #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-        #     #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-
         - name: Checkout release_manifest repo
           uses: actions/checkout@main
           with:
             repository: ncmsdev/release_manifest
             token: ${{ secrets.ORG_NPM_INSTALL }}
-            path: release_manifest 
+            path: release_manifest
+            
+        - name: update tag,name and build,push
+          run: |
+              export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+              echo $CONTAINER_NAME
+              export DOCKER_TAG=$(basename ${{ inputs.tag }})
+              echo $DOCKER_TAG
+              node release_manifest/update_tag.js $CONTAINER_NAME $DOCKER_TAG
+              cat release_manifest/v3.26.00.json
+
+        #     #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
+        #     #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+        #     #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+
+        
             
         - name: run a javascript file
           run: |
             pwd
-            lS
+            ls
             echo $CONTAINER_NAME
             echo $DOCKER_TAG
             
