@@ -67,6 +67,7 @@ jobs:
         - name: update tag,name and build,push
           run: |
               export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+              echo $CONTAINER_NAME
         #     #export DOCKER_TAG=$(basename ${{ inputs.tag }})
         #     #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
         #     #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
@@ -83,7 +84,7 @@ jobs:
           run: |
             pwd
             ls
-            node release_manifest/update_tag.js --container ${CONTAINER_NAME} --tag ${{ inputs.tag }}
+            node release_manifest/update_tag.js --container $CONTAINER_NAME --tag ${{ inputs.tag }}
             cat release_manifest/v3.26.00.json  
             
             
