@@ -43,7 +43,7 @@ jobs:
         - name: Setup latest NPM
           run: | 
             npm install -g npm@latest
-            npm install yargs
+            #npm install yargs
 
         
         - name: Set permissions
@@ -53,19 +53,19 @@ jobs:
         - name: Get dependencies
           run: npm ci --production
           
-        # - uses: elstudio/action-install-azure-cli@v1
+        - uses: elstudio/action-install-azure-cli@v1
                 
-        # #- name: Azure Login
-        #   #uses: azure/login@v1
-        #   #with:
-        #     #creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
+        - name: Azure Login
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
         
-        # #- name: azure login
-        #   #uses: azure/docker-login@v1
-        #   #with:
-        #     #login-server: numogateway.azurecr.io
-        #     #username: ${{ secrets.ORG_REGISTRY_USERNAME }}
-        #     #password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+        - name: azure login
+          uses: azure/docker-login@v1
+          with:
+            login-server: numogateway.azurecr.io
+            username: ${{ secrets.ORG_REGISTRY_USERNAME }}
+            password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
         - name: update tag,name and build,push
           run: |
