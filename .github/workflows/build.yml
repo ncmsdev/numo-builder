@@ -83,8 +83,9 @@ jobs:
               
         - name: git commit and push the version.json
           run : |
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
+            pwd
+            git config user.email "developer@numocity.com"
+            git config user.name "Numo Dev"
             git add .
             git commit -m "Automated commit via GitHub Action"
             git push
