@@ -43,7 +43,7 @@ jobs:
         - name: Setup latest NPM
           run: | 
             npm install -g npm@latest
-            #npm install yargs
+            # npm install yargs
 
         
         - name: Set permissions
