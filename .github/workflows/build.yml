@@ -83,9 +83,9 @@ jobs:
         - name: run a javascript file
           run: |
             pwd
-            ls
-            node release_manifest/update_tag.js ${{ CONTAINER_NAME}} ${{ DOCKER_TAG}}
-            cat release_manifest/v3.26.00.json  
+            lS
+            echo $CONTAINER_NAME
+            echo $DOCKER_TAG
             
             
             
