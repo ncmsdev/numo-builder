@@ -80,21 +80,11 @@ jobs:
               cd release_manifest
               node update_tag.js $CONTAINER_NAME $DOCKER_TAG
               cat v3.26.00.json
+              
+        - name: git commit and push the version.json
+          run : |
+            git add .
+            git commit -m "current version.json updated"
+            git push 
 
-        #     #find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
-        #     #docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-        #     #docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-
-        
-            
-        - name: run a javascript file
-          run: |
-            pwd
-            ls
-            echo $CONTAINER_NAME
-            echo $DOCKER_TAG
-            
-            
-            
-            
-      
+       
