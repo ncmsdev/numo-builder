@@ -84,7 +84,7 @@ jobs:
           run: |
             pwd
             ls
-            node release_manifest/update_tag.js $CONTAINER_NAME $DOCKER_TAG
+            node release_manifest/update_tag.js ${{ CONTAINER_NAME}} ${{ DOCKER_TAG}}
             cat release_manifest/v3.26.00.json  
             
             
