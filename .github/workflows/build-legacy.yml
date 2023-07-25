@@ -61,6 +61,13 @@ jobs:
             cd 01_SourceCode/app
             npm install
             
+        - name: Checkout release_manifest repo
+          uses: actions/checkout@main
+          with:
+            repository: ncmsdev/release_manifest
+            token: ${{ secrets.ORG_NPM_INSTALL }}
+            path: release_manifest
+            
         - name: update tag,name and build,push
           run: |
             export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
@@ -68,3 +75,14 @@ jobs:
             cd 01_SourceCode
             docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
             docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+            cd release_manifest
+            node update_tag.js $CONTAINER_NAME $DOCKER_TAG
+
+        - name: git commit and push the version.json
+          run : |
+            cd release_manifest
+            git config user.email "developer@numocity.com"
+            git config user.name "Numo Dev"
+            git add .
+            git commit -m "Automated commit via GitHub Action"
+            git push
