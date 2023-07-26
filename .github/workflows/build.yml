@@ -86,6 +86,6 @@ jobs:
             cd release_manifest
             git config user.email "developer@numocity.com"
             git config user.name "Numo Dev"
-            git add .
-            git commit -m "Automated commit via GitHub Action"
-            git push
+            git add . || true
+            git commit -m "Automated commit via GitHub Action" || true
+            git push || true
