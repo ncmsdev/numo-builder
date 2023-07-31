@@ -38,15 +38,15 @@ jobs:
         - name: Setup Node
           uses: actions/setup-node@v3
           with:
-            node-version: '14.x'
-          
+           node-version: '14.x'
+           
         - name: Setup latest NPM
           run: npm install -g npm@latest
         
         - name: Set permissions
           run: |
-            git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
-        
+             git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+             
         - name: Get dependencies
           run: npm ci --production
           
@@ -64,11 +64,28 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
+        - name: Checkout release_manifest repo
+          uses: actions/checkout@main
+          with:
+            repository: ncmsdev/release_manifest
+            token: ${{ secrets.ORG_NPM_INSTALL }}
+            path: release_manifest
+            
         - name: update tag,name and build,push
           run: |
-            export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-            export DOCKER_TAG=$(basename ${{ inputs.tag }})
-            find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
-            docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-            docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-      
+              export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+              export DOCKER_TAG=$(basename ${{ inputs.tag }})
+              find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
+              docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              cd release_manifest
+              node update_tag.js $CONTAINER_NAME $DOCKER_TAG
+              
+        - name: git commit and push the version.json
+          run : |
+            cd release_manifest
+            git config user.email "developer@numocity.com"
+            git config user.name "Numo Dev"
+            git add . 
+            git commit -m "Automated commit via GitHub Action" || true
+            git push
