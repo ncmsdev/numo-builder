@@ -76,7 +76,9 @@ jobs:
             docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
             docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
             cd ../release_manifest
+            sed -i "s/__json__/cms_release_manifest.json/g" version.json
             node update_tag.js $CONTAINER_NAME $DOCKER_TAG
+            sed -i "s/cms_release_manifest.json/__json__/g" version.json
 
         - name: git commit and push the version.json
           run : |
