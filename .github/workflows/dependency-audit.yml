@@ -1,0 +1,44 @@
+name: audit-dependencies
+
+on: 
+  workflow_call:
+    secrets:
+      ORG_NPM_INSTALL:
+        required: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub repo'
+        uses: actions/checkout@v3
+      - name: Setup latest NPM
+        run: npm install -g npm@latest
+
+      - name: Set permissions
+        run: |
+          git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+      - name: Get dependencies
+        run: npm ci
+
+      - name: 'Run npm audit'
+        id: npmaudit
+        run: npm audit
+        continue-on-error: true
+
+      - name: 'Await manual approval of audit findings: See Issues tab.'
+        if: steps.npmaudit.outcome != 'success'
+        timeout-minutes: 30
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: sudeeprp,mahesh-sundaram,ncskumar
+          minimum-approvals: 1
+          issue-title: 'NPM audit findings'
+          issue-body: 'View the audit observations and respond to this issue'
+          exclude-workflow-initiator-as-approver: false
+          additional-approved-words: ''
+          additional-denied-words: ''
+
+      - name: 'Approved'
+        run: echo "Audited / Approved"
