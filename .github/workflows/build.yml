@@ -64,12 +64,6 @@ jobs:
             username: ${{ secrets.ORG_REGISTRY_USERNAME }}
             password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
             
-        - name: Checkout release_manifest repo
-          uses: actions/checkout@main
-          with:
-            repository: ncmsdev/release_manifest
-            token: ${{ secrets.ORG_NPM_INSTALL }}
-            path: release_manifest
             
         - name: update tag,name and build,push
           run: |
@@ -78,6 +72,16 @@ jobs:
               find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
               docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              
+        - name: Checkout release_manifest repo
+          uses: actions/checkout@main
+          with:
+            repository: ncmsdev/release_manifest
+            token: ${{ secrets.ORG_NPM_INSTALL }}
+            path: release_manifest
+          
+        - name: Update release-manifest
+          run: |  
               cd release_manifest
               git pull
               sed -i "s/__json__/cms_release_manifest.json/g" version.json
