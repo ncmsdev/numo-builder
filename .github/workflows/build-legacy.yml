@@ -59,6 +59,7 @@ jobs:
         - name: install npm dependencies   
           run: |
             cd 01_SourceCode/app
+            npm install --save-dev @types/node@latest
             npm install
             
         - name: Checkout release_manifest repo
