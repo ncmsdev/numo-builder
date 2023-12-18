@@ -28,6 +28,11 @@ jobs:
         run: npm audit
         continue-on-error: true
 
+      - name: License check
+        id: license
+        run: docker run -v ./licscan:/output -v .:/inputrepo -v ./trivycache:/root/.cache/trivy aquasec/trivy repository --scanners vuln,secret,license /inputrepo
+        continue-on-error: false
+
       - name: 'Await manual approval of audit findings: See Issues tab.'
         if: steps.npmaudit.outcome != 'success'
         timeout-minutes: 30
