@@ -1,0 +1,93 @@
+name: Azure-docker-build-push
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+    secrets:
+      ORG_NPM_INSTALL:
+        required: true
+      ORG_AZURE_CREDENTIALS:
+        required: true
+      ORG_REGISTRY_USERNAME:
+        required: true
+      ORG_REGISTRY_PASSWORD:
+         required: true
+jobs:
+  call-checkmycode:
+    uses: ncmsdev/numo-builder/.github/workflows/checkmycode.yml@main
+    secrets:
+      ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
+
+  build:
+    needs: [call-checkmycode]
+    runs-on: ubuntu-latest
+    steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+          with:
+            persist-credentials: false
+            
+        - name: install pcregrep 
+          run: |
+            sudo apt-get update
+            sudo apt install pcregrep
+            
+        - name: Setup Node
+          uses: actions/setup-node@v3
+          with:
+           node-version: '18.x'
+           
+        - name: Setup latest NPM
+          run: npm install -g npm@latest
+        
+        - name: Set permissions
+          run: |
+             git config --global url."https://${{ secrets.ORG_NPM_INSTALL }}@github.com/".insteadOf ssh://git@github.com/
+             
+        - name: Get dependencies
+          run: npm ci --production
+          
+        - uses: elstudio/action-install-azure-cli@v1
+                
+        - name: Azure Login
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.ORG_AZURE_CREDENTIALS }}
+        
+        - name: azure login
+          uses: azure/docker-login@v1
+          with:
+            login-server: numogateway.azurecr.io
+            username: ${{ secrets.ORG_REGISTRY_USERNAME }}
+            password: ${{ secrets.ORG_REGISTRY_PASSWORD }}
+            
+        - name: Checkout release_manifest repo
+          uses: actions/checkout@main
+          with:
+            repository: ncmsdev/release_manifest
+            token: ${{ secrets.ORG_NPM_INSTALL }}
+            path: release_manifest
+            
+        - name: update tag,name and build,push
+          run: |
+              export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+              export DOCKER_TAG=$(basename ${{ inputs.tag }})
+              find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
+              docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              cd release_manifest
+              sed -i "s/__json__/saas_release_manifest.json/g" version.json
+              node update_tag.js $CONTAINER_NAME $DOCKER_TAG
+              sed -i "s/saas_release_manifest.json/__json__/g" version.json
+              
+        - name: git commit and push the version.json
+          run : |
+            cd release_manifest
+            git config user.email "developer@numocity.com"
+            git config user.name "Numo Dev"
+            git add . 
+            git commit -m "Automated commit via GitHub Action" || true
+            git push
