@@ -30,7 +30,7 @@ jobs:
 
       - name: 'Await manual approval of audit findings: See Issues tab.'
         if: steps.npmaudit.outcome != 'success'
-        timeout-minutes: 30
+        timeout-minutes: 5
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
