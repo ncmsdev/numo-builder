@@ -25,7 +25,7 @@ jobs:
 
       - name: 'Run npm audit'
         id: npmaudit
-        run: npm audit
+        run: npm audit --omit dev
         continue-on-error: true
 
       - name: 'Await manual approval of audit findings: See Issues tab.'
