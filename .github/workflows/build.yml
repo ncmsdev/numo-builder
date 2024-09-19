@@ -65,7 +65,7 @@ jobs:
       ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
 
   build:
-    needs: [call-checkmycode]
+    needs: [call-checkmycode, tag-details]
     if: ${{ (startsWith(inputs.tag-ref, 'refs/tags/SP') && needs.tag-details.outputs.BRANCH_NAME == 'main') || 
             (startsWith(inputs.tag-ref, 'refs/tags/HP') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'SP')) || 
             (startsWith(inputs.tag-ref, 'refs/tags/BR') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'dev-')) }}
