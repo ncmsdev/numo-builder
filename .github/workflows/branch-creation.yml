@@ -79,10 +79,10 @@ jobs:
           if [ git show-ref refs/heads/$NEW_BRANCH_NAME ]; then
             echo "::error::$NEW_BRANCH_NAME already exists...."
             exit 1
-          else
-            git checkout -b "${{ steps.process_vars.outputs.new_branch_name }}"
-            git branch -m "${{ steps.process_vars.outputs.new_branch_name }}" $NEW_BRANCH_NAME
-            git push origin $NEW_BRANCH_NAME
+          else 
+            git checkout -b "$NEW_BRANCH_NAME"
+            git push origin "$NEW_BRANCH_NAME"
+            git push origin --delete "${{ steps.process_vars.outputs.new_branch_name }}"
             echo "$NEW_BRANCH_NAME created...."
           fi
 
