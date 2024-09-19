@@ -1,0 +1,104 @@
+name: Auto Branch Naming
+
+on:
+  workflow_call:
+    inputs:
+      branch-ref:
+        required: true
+        type: string
+      repository-name:
+        required: true
+        type: string
+    secrets:
+      ORG_NPM_INSTALL:
+        required: true
+      ORG_AZURE_CREDENTIALS:
+        required: true
+      ORG_REGISTRY_USERNAME:
+        required: true
+      ORG_REGISTRY_PASSWORD:
+         required: true
+
+jobs:
+  branch-naming:
+    runs-on: ubuntu-latest
+    outputs:
+      BASE_COMMIT: ${{ steps.get_base.outputs.base_commit }}
+      HEAD_COMMIT: ${{ steps.get_base.outputs.head_commit }}
+      NEW_BRANCH_NAME: ${{ steps.process_vars.outputs.new_branch_name }}
+      BRANCH_PREFIX: ${{ steps.determine_prefix.outputs.branch_prefix }}
+      BRANCH_SUFFIX: ${{ steps.determine_prefix.outputs.branch_suffix }}
+    if: startsWith(github.ref, 'refs/heads/')
+    steps:
+      - name: Process variables
+        id: process_vars
+        run: |
+          NEW_BRANCH_REF="${{ inputs.branch-ref }}"
+          NEW_BRANCH_NAME="${NEW_BRANCH_REF##refs/heads/}"
+          echo "new_branch_name=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Checkout another repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repository-name }}
+          token: ${{ secrets.ORG_NPM_INSTALL }}
+          ref: ${{ steps.process_vars.outputs.new_branch_name }}
+
+      - name: Get the base commit
+        id: get_base
+        run: |
+          NEW_BRANCH_REF="${{ inputs.branch-ref }}"
+          BASE_COMMIT=$(git rev-parse $NEW_BRANCH_REF)
+
+          git fetch origin main
+          HEAD_COMMIT=$(git rev-parse origin/main)
+
+          echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
+          echo "head_commit=$HEAD_COMMIT" >> $GITHUB_OUTPUT
+
+      - name: Determine branch prefix
+        id: determine_prefix
+        run: |
+          if [ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ]; then
+            echo "branch_prefix=dev-" >> $GITHUB_OUTPUT
+            echo "branch_suffix=" >> $GITHUB_OUTPUT
+          else
+            echo "branch_prefix=" >> $GITHUB_OUTPUT
+            echo "branch_suffix=_hotfix" >> $GITHUB_OUTPUT
+            if [[ ${{ steps.get_base.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
+              echo "Created hotfix branch from old commit"
+            else
+              echo "Branch ${{ steps.get_base.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
+              exit 1
+            fi
+          fi
+
+      - name: Rename branch
+        run: |
+          NEW_BRANCH_NAME="${{ steps.determine_prefix.outputs.BRANCH_PREFIX }}${{ steps.get_base.outputs.NEW_BRANCH_NAME }}${{ steps.determine_prefix.outputs.BRANCH_SUFFIX }}"
+          if [ git show-ref refs/heads/$NEW_BRANCH_NAME ]; then
+            echo "::error::$NEW_BRANCH_NAME already exists...."
+            exit 1
+          else 
+            git checkout -b "$NEW_BRANCH_NAME"
+            git push origin "$NEW_BRANCH_NAME"
+            git push origin --delete "${{ steps.get_base.outputs.NEW_BRANCH_NAME }}"
+            echo "$NEW_BRANCH_NAME created...."
+          fi
+
+  fail-job:
+    needs: branch-naming
+    if: ${{ always() && needs.branch-naming.result == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout another repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repository-name }}
+          token: ${{ secrets.ORG_NPM_INSTALL }}
+          ref: ${{ needs.branch-naming.outputs.NEW_BRANCH_NAME }}
+
+      - name: Deleting branch
+        run: |
+          git push origin --delete "${{ needs.branch-naming.outputs.NEW_BRANCH_NAME }}"
+          exit 1
