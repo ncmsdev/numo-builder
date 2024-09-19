@@ -29,6 +29,10 @@ jobs:
         with:
           repository: ${{ inputs.repository-name }}
           token: ${{ secrets.ORG_NPM_INSTALL }}
+
+      - uses: actions/checkout@v3
+      - run: |
+          git fetch --all
       
       - name: Get tag information
         id: get_tag_info
