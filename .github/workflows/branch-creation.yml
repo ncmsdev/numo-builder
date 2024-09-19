@@ -65,10 +65,10 @@ jobs:
           else
             echo "branch_prefix=" >> $GITHUB_OUTPUT
             echo "branch_suffix=_hotfix" >> $GITHUB_OUTPUT
-            if [[ ${{ steps.get_base.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
+            if [[ ${{ steps.process_vars.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
               echo "Created hotfix branch from old commit"
             else
-              echo "Branch ${{ steps.get_base.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
+              echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
               exit 1
             fi
           fi
@@ -82,7 +82,7 @@ jobs:
           else 
             git checkout -b "$NEW_BRANCH_NAME"
             git push origin "$NEW_BRANCH_NAME"
-            git push origin --delete "${{ steps.get_base.outputs.NEW_BRANCH_NAME }}"
+            git push origin --delete "${{ steps.process_vars.outputs.new_branch_name }}"
             echo "$NEW_BRANCH_NAME created...."
           fi
 
