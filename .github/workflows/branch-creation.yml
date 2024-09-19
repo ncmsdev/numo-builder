@@ -75,7 +75,7 @@ jobs:
 
       - name: Rename branch
         run: |
-          NEW_BRANCH_NAME="${{ steps.determine_prefix.outputs.BRANCH_PREFIX }}${{ steps.get_base.outputs.NEW_BRANCH_NAME }}${{ steps.determine_prefix.outputs.BRANCH_SUFFIX }}"
+          NEW_BRANCH_NAME="${{ steps.determine_prefix.outputs.BRANCH_PREFIX }}${{ steps.process_vars.outputs.new_branch_name }}${{ steps.determine_prefix.outputs.BRANCH_SUFFIX }}"
           if [ git show-ref refs/heads/$NEW_BRANCH_NAME ]; then
             echo "::error::$NEW_BRANCH_NAME already exists...."
             exit 1
