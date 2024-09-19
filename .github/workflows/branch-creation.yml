@@ -79,7 +79,9 @@ jobs:
           if [ git show-ref refs/heads/$NEW_BRANCH_NAME ]; then
             echo "::error::$NEW_BRANCH_NAME already exists...."
             exit 1
-          else 
+          else
+            git config --global user.email "developer@numocity.com""
+            git config --global user.name "Numo Dev" 
             git checkout -b "$NEW_BRANCH_NAME"
             git commit --allow-empty -m "[skip ci] Create branch without triggering actions"
             git push origin "$NEW_BRANCH_NAME"
