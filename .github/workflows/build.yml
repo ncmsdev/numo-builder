@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       BRANCH_NAME: ${{ steps.find_branch.outputs.branch }}
+      TAG_NAME: ${{ steps.get_tag_info.outputs.tag }}
     steps:
       - name: Checkout another repository
         uses: actions/checkout@v3
@@ -43,6 +44,7 @@ jobs:
             commit_sha=$(git rev-list -n 1 $tag_name)
             echo "Commit SHA for the tag is $commit_sha"
             echo "commit_sha=$commit_sha" >> $GITHUB_OUTPUT
+            echo "tag=$tag_name" >> $GITHUB_OUTPUT
 
       - name: Find branch for the commit
         id: find_branch
@@ -113,7 +115,7 @@ jobs:
         - name: update tag,name and build,push
           run: |
               export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-              export DOCKER_TAG=$(basename ${{ inputs.tag }})
+              export DOCKER_TAG=$(basename ${{ needs.tag-details.outputs.TAG_NAME }})
               find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
               docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
