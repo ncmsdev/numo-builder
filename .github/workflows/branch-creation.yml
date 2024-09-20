@@ -55,15 +55,15 @@ jobs:
       - name: Commit check with regex
         id: commit_check
         run: |
-          if [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.get_base.outputs.new_branch_name }} =~ ^dev-*$ ]]; then
-            echo "Development branch ${{ steps.get_base.outputs.new_branch_name }} created"
-          elif [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.get_base.outputs.new_branch_name }} !=~ ^dev-*$ ]]; then
-            echo "Branch ${{ steps.get_base.outputs.new_branch_name }} does not match the regex ^dev-*$"
+          if [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.process_vars.outputs.new_branch_name }} =~ ^dev-*$ ]]; then
+            echo "Development branch ${{ steps.process_vars.outputs.new_branch_name }} created"
+          elif [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.process_vars.outputs.new_branch_name }} !=~ ^dev-*$ ]]; then
+            echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} does not match the regex ^dev-*$"
             exit 1
-          elif [[ "${{ steps.get_base.outputs.base_commit }}" != "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.get_base.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
-            echo "Hotfix ${{ steps.get_base.outputs.new_branch_name }} branch created"
+          elif [[ "${{ steps.get_base.outputs.base_commit }}" != "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.process_vars.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
+            echo "Hotfix ${{ steps.process_vars.outputs.new_branch_name }} branch created"
           else
-            echo "Branch ${{ steps.get_base.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
+            echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
             exit 1
           fi
 
