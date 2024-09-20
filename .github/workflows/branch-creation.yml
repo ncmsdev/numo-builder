@@ -23,11 +23,7 @@ jobs:
   branch-naming:
     runs-on: ubuntu-latest
     outputs:
-      BASE_COMMIT: ${{ steps.get_base.outputs.base_commit }}
-      HEAD_COMMIT: ${{ steps.get_base.outputs.head_commit }}
       NEW_BRANCH_NAME: ${{ steps.process_vars.outputs.new_branch_name }}
-      BRANCH_PREFIX: ${{ steps.determine_prefix.outputs.branch_prefix }}
-      BRANCH_SUFFIX: ${{ steps.determine_prefix.outputs.branch_suffix }}
     if: startsWith(github.ref, 'refs/heads/')
     steps:
       - name: Process variables
@@ -56,34 +52,19 @@ jobs:
           echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
           echo "head_commit=$HEAD_COMMIT" >> $GITHUB_OUTPUT
 
-      - name: Determine branch prefix
-        id: determine_prefix
+      - name: Commit check with regex
+        id: commit_check
         run: |
-          if [ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ]; then
-            echo "branch_prefix=dev-" >> $GITHUB_OUTPUT
-            echo "branch_suffix=" >> $GITHUB_OUTPUT
-          else
-            echo "branch_prefix=" >> $GITHUB_OUTPUT
-            echo "branch_suffix=_hotfix" >> $GITHUB_OUTPUT
-            if [[ ${{ steps.process_vars.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
-              echo "Created hotfix branch from old commit"
-            else
-              echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
-              exit 1
-            fi
-          fi
-
-      - name: Rename branch
-        run: |
-          NEW_BRANCH_NAME="${{ steps.determine_prefix.outputs.BRANCH_PREFIX }}${{ steps.process_vars.outputs.new_branch_name }}${{ steps.determine_prefix.outputs.BRANCH_SUFFIX }}"
-          if [ git show-ref refs/heads/$NEW_BRANCH_NAME ]; then
-            echo "::error::$NEW_BRANCH_NAME already exists...."
+          if [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.get_base.outputs.new_branch_name }} =~ ^dev-*$ ]]; then
+            echo "Development branch ${{ steps.get_base.outputs.new_branch_name }} created"
+          elif [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.get_base.outputs.new_branch_name }} !=~ ^dev-*$ ]]; then
+            echo "Branch ${{ steps.get_base.outputs.new_branch_name }} does not match the regex ^dev-*$"
             exit 1
-          else 
-            git checkout -b "$NEW_BRANCH_NAME"
-            git push origin "$NEW_BRANCH_NAME"
-            git push origin --delete "${{ steps.process_vars.outputs.new_branch_name }}"
-            echo "$NEW_BRANCH_NAME created...."
+          elif [[ "${{ steps.get_base.outputs.base_commit }}" != "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.get_base.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
+            echo "Hotfix ${{ steps.get_base.outputs.new_branch_name }} branch created"
+          else
+            echo "Branch ${{ steps.get_base.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
+            exit 1
           fi
 
   fail-job:
