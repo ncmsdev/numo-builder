@@ -57,7 +57,7 @@ jobs:
         run: |
           if [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.process_vars.outputs.new_branch_name }} =~ ^dev-*$ ]]; then
             echo "Development branch ${{ steps.process_vars.outputs.new_branch_name }} created"
-          elif [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.process_vars.outputs.new_branch_name }} !=~ ^dev-*$ ]]; then
+          elif [[ "${{ steps.get_base.outputs.base_commit }}" = "${{ steps.get_base.outputs.head_commit }}" ] && [ ! ${{ steps.process_vars.outputs.new_branch_name }} =~ ^dev-*$ ]]; then
             echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} does not match the regex ^dev-*$"
             exit 1
           elif [[ "${{ steps.get_base.outputs.base_commit }}" != "${{ steps.get_base.outputs.head_commit }}" ] && [ ${{ steps.process_vars.outputs.new_branch_name }} =~ ^SP[0-9]+$ ]]; then
