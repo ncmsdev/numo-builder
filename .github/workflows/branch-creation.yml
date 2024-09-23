@@ -40,7 +40,7 @@ jobs:
           token: ${{ secrets.ORG_NPM_INSTALL }}
           ref: ${{ steps.process_vars.outputs.new_branch_name }}
 
-      - name: Get the base commit
+      - name: Get the base and HEAD commit
         id: get_base
         run: |
           NEW_BRANCH_REF="${{ inputs.branch-ref }}"
