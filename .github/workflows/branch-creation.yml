@@ -72,7 +72,7 @@ jobs:
     if: ${{ always() && needs.branch-naming.result == 'failure' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout another repository
+      - name: Checkout service repository
         uses: actions/checkout@v3
         with:
           repository: ${{ inputs.repository-name }}
