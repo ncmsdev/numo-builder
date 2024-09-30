@@ -12,12 +12,6 @@ on:
     secrets:
       ORG_NPM_INSTALL:
         required: true
-      ORG_AZURE_CREDENTIALS:
-        required: true
-      ORG_REGISTRY_USERNAME:
-        required: true
-      ORG_REGISTRY_PASSWORD:
-         required: true
 
 jobs:
   branch-naming:
