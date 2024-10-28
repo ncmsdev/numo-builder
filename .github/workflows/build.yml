@@ -49,9 +49,7 @@ jobs:
       - name: Find branch for the tag commit
         id: find_branch
         run: |
-          commit_sha=${{ steps.get_tag_info.outputs.commit_sha }}
-          branch=$(git branch -r --contains $commit_sha | grep -v "HEAD" | head -n 1 | sed 's/origin\///')
-          branch=$(echo "$branch" | xargs)
+          branch=$(git --no-pager log -1 --decorate "${{ steps.get_tag_info.outputs.tag }}" | head -n 1 | awk -F'tag: [^,]*, origin/' '{print $2}' | awk -F'[,)]' '{print $1}')
           echo "Branch is $branch"
           echo "branch=$branch" >> $GITHUB_OUTPUT
 
