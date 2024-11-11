@@ -52,7 +52,6 @@ jobs:
           run: |
               export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
               export DOCKER_TAG=$(basename ${{ inputs.tag }})
-              find . -name '*function.json' -print0 | xargs -0 sed -i 's/function/anonymous/g' || true
               docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
