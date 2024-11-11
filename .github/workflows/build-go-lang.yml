@@ -52,7 +52,7 @@ jobs:
           run: |
               export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
               export DOCKER_TAG=$(basename ${{ inputs.tag }})
-              docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
+              docker build -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG .
               docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
               echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
