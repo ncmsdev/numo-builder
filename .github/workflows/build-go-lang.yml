@@ -23,11 +23,6 @@ jobs:
           uses: actions/checkout@main
           with:
             persist-credentials: false
-            
-        - name: install pcregrep 
-          run: |
-            sudo apt-get update || true
-            sudo apt install pcregrep
         
         - name: Set permissions
           run: |
@@ -50,7 +45,7 @@ jobs:
             
         - name: update tag,name and build,push
           run: |
-              export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
+              export CONTAINER_NAME=$(grep 'container_name:' docker-compose.yml | awk '{print $2}')
               export DOCKER_TAG=$(basename ${{ inputs.tag }})
               docker build -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG .
               docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
