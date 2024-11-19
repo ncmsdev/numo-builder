@@ -15,7 +15,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup latest NPM
-        run: npm install -g npm@latest
+        run: npm install -g npm@latest --unsafe-perm=true --allow-root
 
       - name: Set permissions
         run: |
