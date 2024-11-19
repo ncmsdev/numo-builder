@@ -22,7 +22,7 @@ jobs:
             node-version: '18.x'
           
         - name: Setup latest NPM
-          run: npm install -g
+          run: npm install -g npm@latest
         
         - name: Set permissions
           run: |
