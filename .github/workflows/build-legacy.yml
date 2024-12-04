@@ -2,22 +2,64 @@ name: Azure-docker-build-push
 on:
   workflow_call:
     inputs:
-      tag:
+      tag-ref:
+        required: true
+        type: string
+      repository-name:
         required: true
         type: string
     secrets:
+      ORG_NPM_INSTALL:
+        required: true
       ORG_AZURE_CREDENTIALS:
         required: true
       ORG_REGISTRY_USERNAME:
         required: true
       ORG_REGISTRY_PASSWORD:
          required: true
-      ORG_NPM_INSTALL:
-         required: true
          
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
+  tag-details:
+    runs-on: ubuntu-latest
+    outputs:
+      BRANCH_NAME: ${{ steps.find_branch.outputs.branch }}
+      TAG_NAME: ${{ steps.get_tag_info.outputs.tag }}
+    steps:
+      - name: Checkout service repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repository-name }}
+          token: ${{ secrets.ORG_NPM_INSTALL }}
+
+      - uses: actions/checkout@v3
+      - run: |
+          git fetch --all
+      
+      - name: Get tag's commit information
+        id: get_tag_info
+        run: |
+            GITHUB_REF=${{ inputs.tag-ref }}
+            tag_name=${GITHUB_REF#refs/tags/}
+            echo "Tag name is $tag_name"
+            commit_sha=$(git rev-list -n 1 $tag_name)
+            echo "Commit SHA for the tag is $commit_sha"
+            echo "commit_sha=$commit_sha" >> $GITHUB_OUTPUT
+            echo "tag=$tag_name" >> $GITHUB_OUTPUT
+
+      - name: Find branch for the tag
+        id: find_branch
+        run: |
+          branch=$(git --no-pager log -1 --decorate "${{ steps.get_tag_info.outputs.tag }}" | head -n 1 | awk -F'tag: [^,]*, origin/' '{print $2}' | awk -F'[,)]' '{print $1}')
+          echo "Branch is $branch"
+          echo "branch=$branch" >> $GITHUB_OUTPUT
+
   build:
+   needs: [tag-details]
+   if: ${{ (startsWith(inputs.tag-ref, 'refs/tags/SP') && needs.tag-details.outputs.BRANCH_NAME == 'main') || 
+            (startsWith(inputs.tag-ref, 'refs/tags/HP') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'SP')) || 
+            (startsWith(inputs.tag-ref, 'refs/tags/BR') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'dev-')) }}
    runs-on: ubuntu-latest
    steps:
         # checkout the repo
@@ -36,7 +78,7 @@ jobs:
             node-version: '18.x'
           
         - name: Setup latest NPM
-          run: npm install -g npm@latest
+          run: npm install -g
         
         - uses: elstudio/action-install-azure-cli@v1
                 
@@ -71,7 +113,7 @@ jobs:
         - name: update tag,name and build,push
           run: |
             export CONTAINER_NAME=$(cat docker-compose.yml | pcregrep -o1 'container_name: ([^\s]+)')
-            export DOCKER_TAG=$(basename ${{ inputs.tag }})
+            export DOCKER_TAG=$(basename ${{ needs.tag-details.outputs.TAG_NAME }})
             cd 01_SourceCode
             docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
             docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
@@ -88,3 +130,15 @@ jobs:
             git add .
             git commit -m "Automated commit via GitHub Action" || true
             git push
+
+  fail-job:
+    needs: [build]
+    if: ${{ always() && needs.build.result == 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag Rules
+        run: |
+          echo "SP tags -> main branch"
+          echo "HP tags -> hotfix branch (SP[0-9]+-hotfix)"
+          echo "BR tags -> development branch (dev-*)"
+          exit 1
