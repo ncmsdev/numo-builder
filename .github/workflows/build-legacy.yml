@@ -78,7 +78,7 @@ jobs:
             node-version: '18.x'
           
         - name: Setup latest NPM
-          run: npm install -g
+          run: npm install -g npm@latest
         
         - uses: elstudio/action-install-azure-cli@v1
                 
