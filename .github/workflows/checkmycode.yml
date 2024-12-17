@@ -22,7 +22,7 @@ jobs:
             node-version: '20.x'
           
         - name: Setup latest NPM
-          run: npm install npm@v10.8.2
+          run: npm install npm@latest
         
         - name: Set permissions
           run: |
