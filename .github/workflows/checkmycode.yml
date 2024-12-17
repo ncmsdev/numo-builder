@@ -19,10 +19,10 @@ jobs:
         - name: Setup Node
           uses: actions/setup-node@v3
           with:
-            node-version: '18.x'
+            node-version: '20.x'
           
         - name: Setup latest NPM
-          run: npm install -g npm@latest
+          run: npm install npm@v10.8.2
         
         - name: Set permissions
           run: |
