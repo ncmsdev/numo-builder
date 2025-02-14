@@ -43,6 +43,9 @@ jobs:
           git fetch origin main
           HEAD_COMMIT=$(git rev-parse origin/main)
 
+          echo "git for-each-ref --format='%(refname:short)' --points-at $BASE_COMMIT | grep -E '^SP[0-9]+_hotfix$|^origin/SP[0-9]+_hotfix$'"
+          HOTFIX_BASE_COMMIT_BRANCHES=$(git for-each-ref --format='%(refname:short)' --points-at $BASE_COMMIT | grep -E '^SP[0-9]+_hotfix$|^origin/SP[0-9]+_hotfix$')
+
           echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
           echo "head_commit=$HEAD_COMMIT" >> $GITHUB_OUTPUT
           echo "hotfix_base_commit_branches=$HOTFIX_BASE_COMMIT_BRANCHES" >> $GITHUB_OUTPUT
