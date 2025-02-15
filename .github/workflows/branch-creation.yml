@@ -50,7 +50,7 @@ jobs:
 
           echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
           echo "head_commit=$HEAD_COMMIT" >> $GITHUB_OUTPUT
-          echo "hotfix_base_commit_branches=$HOTFIX_BASE_COMMIT_BRANCHES" >> "$GITHUB_OUTPUT"
+          echo "hotfix_base_commit_branches=$HOTFIX_BASE_COMMIT_BRANCHES" >> $GITHUB_OUTPUT
 
       - name: Commit and regex check
         id: commit_check
