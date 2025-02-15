@@ -33,6 +33,7 @@ jobs:
           repository: ${{ inputs.repository-name }}
           token: ${{ secrets.ORG_NPM_INSTALL }}
           ref: ${{ steps.process_vars.outputs.new_branch_name }}
+          fetch-depth: 0
 
       - name: Get the base and HEAD commit
         id: get_base
