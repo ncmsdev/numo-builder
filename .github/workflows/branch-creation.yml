@@ -45,7 +45,6 @@ jobs:
           HEAD_COMMIT=$(git rev-parse origin/main)
 
           HOTFIX_BASE_COMMIT_BRANCHES=$(git for-each-ref --format='%(refname:short)' --points-at $BASE_COMMIT | grep -E '^SP[0-9]+_hotfix$|^origin/SP[0-9]+_hotfix$' | paste -s -d ' ')
-          echo "git for-each-ref --format='%(refname:short)' --points-at $BASE_COMMIT | grep -E '^SP[0-9]+_hotfix$|^origin/SP[0-9]+_hotfix$' | paste -s -d ' '"
 
           echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
           echo "head_commit=$HEAD_COMMIT" >> $GITHUB_OUTPUT
@@ -65,7 +64,7 @@ jobs:
           elif [[ "${{ steps.get_base.outputs.base_commit }}" != "${{ steps.get_base.outputs.head_commit }}" && -n "${{ steps.get_base.outputs.hotfix_base_commit_branches }}" && ${{ steps.process_vars.outputs.new_branch_name }} =~ ^dev-SP[0-9]+_hotfix_[a-zA-Z0-9]+$ ]]; then
             echo "Hotfix ${{ steps.process_vars.outputs.new_branch_name }} development branch created"
           else
-            echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} does not match the regex ^SP[0-9]+$"
+            echo "Branch ${{ steps.process_vars.outputs.new_branch_name }} was not created as the branch naming rules was not followed"
             exit 1
           fi
 
