@@ -143,6 +143,15 @@ jobs:
             git add . 
             git commit -m "Automated commit via GitHub Action" || true
             git push
+        
+        - name: Create a dummy commit if it is an SP tag to avoid the same tag commit ID
+          if: startsWith(needs.tag-details.outputs.TAG_NAME, 'SP')
+          run: |
+            git config --global user.email "developer@numocity.com"
+            git config --global user.name "Numo Dev"
+            git checkout main
+            git commit --allow-empty -m "Dummy commit after creating tag ${{ needs.tag-details.outputs.TAG_NAME}}"
+            git push
 
   fail-job:
     needs: [call-checkmycode, build]
