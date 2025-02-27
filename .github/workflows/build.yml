@@ -125,7 +125,7 @@ jobs:
           run: |
             git config --global user.email "developer@numocity.com"
             git config --global user.name "Numo Dev"
-            git checkout main
+            git checkout ${{ needs.tag-details.outputs.BRANCH_NAME }}
             git commit --allow-empty -m "Dummy commit after creating tag ${{ needs.tag-details.outputs.TAG_NAME}}"
             git push
               
