@@ -70,9 +70,11 @@ jobs:
 
       - name: Dummy commit to the created branch
         run: |
+          git config --global user.email "developer@numocity.com"
+          git config --global user.name "Numo Dev"
           git checkout "${{ steps.process_vars.outputs.new_branch_name }}"
           git commit --allow-empty -m "Branch caller dummy commit"
-          git push https://Numo%20Dev:${{ secrets.ORG_NPM_INSTALL }}@github.com/${{ inputs.repository-name }}.git ${{ steps.process_vars.outputs.new_branch_name }}
+          git push
 
   fail-job:
     needs: branch-naming
