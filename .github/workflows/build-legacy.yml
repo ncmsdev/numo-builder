@@ -139,6 +139,6 @@ jobs:
       - name: Tag Rules
         run: |
           echo "SP tags -> main branch"
-          echo "HP tags -> hotfix branch (SP[0-9]+-hotfix)"
+          echo "HP tags -> hotfix branch (SP[0-9]+_hotfix)"
           echo "BR tags -> development branch (dev-*)"
           exit 1
