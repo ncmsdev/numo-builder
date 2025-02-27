@@ -72,7 +72,7 @@ jobs:
         run: |
           git checkout "${{ steps.process_vars.outputs.new_branch_name }}"
           git commit --allow-empty -m "Branch caller dummy commit"
-          git push origin "${{ steps.process_vars.outputs.new_branch_name }}"
+          git push https://Numo%20Dev:${{ secrets.ORG_NPM_INSTALL }}@github.com/${{ inputs.repository-name }}.git ${{ steps.process_vars.outputs.new_branch_name }}
 
   fail-job:
     needs: branch-naming
