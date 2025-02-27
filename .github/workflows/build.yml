@@ -121,17 +121,6 @@ jobs:
               docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
               echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
               echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-
-        - name: Create a dummy commit if it is an SP tag to avoid the same tag commit ID
-          if: startsWith(needs.tag-details.outputs.TAG_NAME, 'SP')
-          run: |
-            git config user.email "developer@numocity.com"
-            git config user.name "Numo Dev"
-            git checkout ${{ needs.tag-details.outputs.BRANCH_NAME }}
-            git reset --hard HEAD  
-            git clean -fd
-            git commit --allow-empty -m "Dummy commit after creating tag ${{ needs.tag-details.outputs.TAG_NAME}}"
-            git push
               
         - name: Checkout release_manifest repo
           uses: actions/checkout@main
