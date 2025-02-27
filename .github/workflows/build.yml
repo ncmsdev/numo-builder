@@ -73,7 +73,8 @@ jobs:
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@v4
           with:
-            persist-credentials: false
+            token: ${{ secrets.ORG_NPM_INSTALL }}
+            repository: ${{ inputs.repository-name }}
             fetch-depth: 0
             
         - name: install pcregrep 
@@ -124,8 +125,8 @@ jobs:
         - name: Create a dummy commit if it is an SP tag to avoid the same tag commit ID
           if: startsWith(needs.tag-details.outputs.TAG_NAME, 'SP')
           run: |
-            git config --global user.email "developer@numocity.com"
-            git config --global user.name "Numo Dev"
+            git config user.email "developer@numocity.com"
+            git config user.name "Numo Dev"
             git checkout ${{ needs.tag-details.outputs.BRANCH_NAME }}
             git reset --hard HEAD  
             git clean -fd
