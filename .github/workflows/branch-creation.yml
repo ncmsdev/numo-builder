@@ -68,6 +68,12 @@ jobs:
             exit 1
           fi
 
+      - name: Dummy commit to the created branch
+        run: |
+          git checkout "${{ inputs.branch-ref }}"
+          git commit --allow-empty -m "Triggering a build"
+          git push origin "${{ inputs.branch-ref }}"
+
   fail-job:
     needs: branch-naming
     if: ${{ always() && needs.branch-naming.result == 'failure' }}
