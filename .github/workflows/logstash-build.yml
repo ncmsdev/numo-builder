@@ -92,17 +92,13 @@ jobs:
             echo "Extracting container name from docker-compose.yml..."
             CONTAINER_NAME=$(grep 'container_name:' docker-compose.yml | awk '{print $2}')
             echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
-
-            echo "Extracting Docker tag from input..."
-            DOCKER_TAG=$(basename "${{ inputs.tag }}")
-            echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
             
         - name: Build and push Docker image
           uses: docker/build-push-action@v5
           with:
             context: .
             push: true
-            tags: numogateway.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.DOCKER_TAG }}
+            tags: numogateway.azurecr.io/${{ env.CONTAINER_NAME }}:${{ needs.tag-details.outputs.TAG_NAME }}
 
   fail-job:
     needs: [build]
