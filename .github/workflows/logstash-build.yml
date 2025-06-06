@@ -105,8 +105,8 @@ jobs:
             tags: numogateway.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.DOCKER_TAG }}
 
   fail-job:
-    needs: [call-checkmycode, build]
-    if: ${{ always() && needs.call-checkmycode.result == 'skipped' && needs.build.result == 'skipped' }}
+    needs: [build]
+    if: ${{ always() && needs.build.result == 'skipped' }}
     runs-on: ubuntu-latest
     steps:
       - name: Tag Rules
