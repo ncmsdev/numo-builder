@@ -40,8 +40,7 @@ jobs:
       - name: Get tag's commit information
         id: get_tag_info
         run: |
-            GITHUB_REF=${{ inputs.tag-ref }}
-            tag_name=${GITHUB_REF#refs/tags/}
+            tag_name=${{ inputs.tag-ref }}
             echo "Tag name is $tag_name"
             commit_sha=$(git rev-list -n 1 $tag_name)
             echo "Commit SHA for the tag is $commit_sha"
