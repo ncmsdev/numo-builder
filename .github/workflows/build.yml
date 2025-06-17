@@ -55,18 +55,18 @@ jobs:
 
   call-checkmycode:
     needs: tag-details
-    if: ${{ (startsWith(inputs.tag-ref, 'refs/tags/SP') && needs.tag-details.outputs.BRANCH_NAME == 'main') || 
-            (startsWith(inputs.tag-ref, 'refs/tags/HP') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'SP')) || 
-            (startsWith(inputs.tag-ref, 'refs/tags/BR') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'dev-')) }}
+    if: ${{ (startsWith(inputs.tag-ref, 'SP') && needs.tag-details.outputs.BRANCH_NAME == 'main') || 
+            (startsWith(inputs.tag-ref, 'HP') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'SP')) || 
+            (startsWith(inputs.tag-ref, 'BR') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'dev-')) }}
     uses: ncmsdev/numo-builder/.github/workflows/checkmycode.yml@main
     secrets:
       ORG_NPM_INSTALL: ${{ secrets.ORG_NPM_INSTALL }}
 
   build:
     needs: [call-checkmycode, tag-details]
-    if: ${{ (startsWith(inputs.tag-ref, 'refs/tags/SP') && needs.tag-details.outputs.BRANCH_NAME == 'main') || 
-            (startsWith(inputs.tag-ref, 'refs/tags/HP') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'SP')) || 
-            (startsWith(inputs.tag-ref, 'refs/tags/BR') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'dev-')) }}
+    if: ${{ (startsWith(inputs.tag-ref, 'SP') && needs.tag-details.outputs.BRANCH_NAME == 'main') || 
+            (startsWith(inputs.tag-ref, 'HP') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'SP')) || 
+            (startsWith(inputs.tag-ref, 'BR') && startsWith(needs.tag-details.outputs.BRANCH_NAME, 'dev-')) }}
     runs-on: ubuntu-latest
     steps:
         # checkout the repo
