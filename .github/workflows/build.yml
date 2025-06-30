@@ -128,6 +128,7 @@ jobs:
             path: release_manifest
           
         - name: Update release-manifest
+          if: startsWith(inputs.tag-ref, 'refs/tags/SP')
           run: |  
               cd release_manifest
               git pull
@@ -136,6 +137,7 @@ jobs:
               sed -i "s/cms_release_manifest.json/__json__/g" version.json
               
         - name: git commit and push the version.json
+          if: startsWith(inputs.tag-ref, 'refs/tags/SP')
           run : |
             cd release_manifest
             git config user.email "developer@numocity.com"
