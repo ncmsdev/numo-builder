@@ -117,12 +117,20 @@ jobs:
             cd 01_SourceCode
             docker build . -t numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
             docker push numogateway.azurecr.io/${CONTAINER_NAME}:$DOCKER_TAG
-            cd ../release_manifest
-            sed -i "s/__json__/cms_release_manifest.json/g" version.json
-            node update_tag.js $CONTAINER_NAME $DOCKER_TAG
-            sed -i "s/cms_release_manifest.json/__json__/g" version.json
+            echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+            echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+
+        - name: Update release-manifest
+          if: startsWith(inputs.tag-ref, 'refs/tags/SP')
+          run: |  
+              cd release_manifest
+              git pull
+              sed -i "s/__json__/cms_release_manifest.json/g" version.json
+              node update_tag.js $CONTAINER_NAME $DOCKER_TAG
+              sed -i "s/cms_release_manifest.json/__json__/g" version.json
 
         - name: git commit and push the version.json
+          if: startsWith(inputs.tag-ref, 'refs/tags/SP')
           run : |
             cd release_manifest
             git config user.email "developer@numocity.com"
