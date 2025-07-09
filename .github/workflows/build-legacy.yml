@@ -67,7 +67,7 @@ jobs:
           uses: actions/checkout@main
           with:
             persist-credentials: false
-            ref: ${{ needs.tag-details.outputs.TAG_NAME }})
+            ref: ${{ needs.tag-details.outputs.TAG_NAME }}
             
         - name: install pcregrep 
           run: |
